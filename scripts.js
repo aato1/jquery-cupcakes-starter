@@ -9,7 +9,20 @@
 let cupcakesCollection = null;
 
 // use get to grab and display the cupcakes in their default order (this endpoint should return all of the cupcakes in  JSON in alphabetical order])
-// TO DO
+$.get("https://9a2374a7-f18c-4c4e-aaa7-576c4e20a684.mock.pstmn.io/more-cupcakes",
+    function(data) {
+        //log to console
+        console.log(data);
+
+        //display cupcakes to page
+        displayCupcakes(data);
+
+        //add data to the local variable
+        cupcakesCollection = data;
+}, "json").fail(function() {
+    //clear out container
+    $("#cupcakes").empty().append("<div>There was an error in your request.</div>");
+});
 
 
 // display sorted in ascending order (this is calling a different endpoint than the original, but you can use the same one or the global variable, we're just writing this as another call to the server so we can see the syntax for this type of call)
@@ -50,48 +63,53 @@ $("#zed").click(function(){
 function displayCupcakes(data){
     
     // clear out any previous output from the container
-    // TO DO
+    $("#cupcakes").empty();
 
     // an empty string to build our output
     let string = "";
     
     // iterate through the returned cupcakes collection and display to the screen in semantic tags
-    // TO DO
+    for(let cupcake of data) {
         string += 
         `<section>
-            <img src="${"add cupcake image"}" alt="${"add cupcake image alt text"}">
-            <h4>${"add cupcake name"}</h4>
+            <img src="${cupcake.image}" alt="${cupcake.alt}">
+            <h4>${cupcake.name}</h4>
             <b>Ingredients:</b>
-            <p class='ingredients'>${"add cupcake ingredients"}</p>
-            <b>${"add frosting type/name"} Frosting</b>
-            <p class='frosting'>${"add frosting ingredients"}</p>
+            <p class='ingredients'>${cupcake.ingredients}</p>
+            <b>${cupcake.frosting} Frosting</b>
+            <p class='frosting'>${cupcake.frostingIngredients}</p>
         </section>`;
+    }
     
-        // add content to page
-    // TO DO
+    // add content to page
+    $("#cupcakes").html(string);
+
 }
 
 // helper function for displaying the filtered results - called on change of select drop down
 // this looks at the JSON of our collection, specifically each cupcake's value attribute, to return only the cupcakes whose tag list includes the correct tags for that category of cupcakes (when you choose chocolate, you will see all of the cupcakes that have a tag of chocolate in their tags property)
 $("#filter").change(function (){
     // get the currently selected option from the select drop down
-    let tag; // TO DO
+    let tag = $(this).val();
 
     // if the user selected "all", display all of the cupcakes from our global variable
     if(tag === "all"){
         // displays all of the cupcakes
-        // TO DO
+        displayCupcakes(cupcakesCollection);
 
         // enables the user to sort alphabetically again
-        // TO DO
+        $("#alpha").prop("disabled", false);
+        $("#zed").prop("disabled", false);
     }else{
         // store the cupcake objects with that tag to a new variable, this is the collection we'll display to the screen
-       // TO DO
+       let filteredCupcakes = cupcakesCollection.filter((cupcake) => cupcake.tags.includes(tag));
+       console.log(filteredCupcakes);
 
         // display the filtered array to the screen
-        // TO DO
+        displayCupcakes(filteredCupcakes);
 
         // disable the buttons to sort alphabetically for now. We could add this feature for filtered results later
-       // TO DO
+        $("#alpha").prop("disabled", true);
+        $("#zed").prop("disabled", true);
     }
 });
